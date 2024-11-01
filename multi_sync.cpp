@@ -3,6 +3,7 @@
 
 void executarTesteMultithreadComSincronizacao(int numProdutores, int numConsumidores){
     Conta conta;
+    conta.setSinc(0); // Ativa sincronização com mutex
 
     std::vector<pthread_t> produtores(numProdutores);
     std::vector<pthread_t> consumidores(numConsumidores);
@@ -28,12 +29,11 @@ void executarTesteMultithreadComSincronizacao(int numProdutores, int numConsumid
     auto fim = std::chrono::high_resolution_clock::now(); // Finalizar tempo
     std::chrono::duration<double> duracao = fim - comeco; 
     std::cout.precision(3);
-    std::cout << "Tempo multithread com sincronizacao: " << std::endl;
+    std::cout << "Teste multithread com sincronizacao: " << std::endl;
     std::cout << "Produtores: " << numProdutores << std::endl;
     std::cout << "Consumidores: " << numConsumidores << std::endl;
     std::cout << "Saldo: " << conta.getSaldo() << std::endl;
     std::cout << "Tempo total: " << duracao.count() << std::endl;
-   
 }
 
 int main(){

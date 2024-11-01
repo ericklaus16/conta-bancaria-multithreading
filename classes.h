@@ -8,10 +8,12 @@ class Conta {
     private:
         int saldo;
         pthread_mutex_t mutex;
+        int sinc = 1; // Se sinc é igual a 0, então ativa a sincronização
     public:
-        Conta(){
+        Conta(int sincro = 1){
             saldo = 0;
             pthread_mutex_init(&mutex, NULL);
+            sinc = sincro;
         }
         
         ~Conta(){
@@ -19,24 +21,33 @@ class Conta {
         }
 
         void depositar(int valor){
-            pthread_mutex_lock(&mutex);
-            if(saldo < 500000){
-                saldo += valor;
-            }
-            pthread_mutex_unlock(&mutex);
+            if (sinc == 0) pthread_mutex_lock(&mutex);
+
+            if(saldo < 500000) saldo += valor;
+
+            if (sinc == 0) pthread_mutex_unlock(&mutex);
         }
 
         void sacar(int valor){
-            pthread_mutex_lock(&mutex);
+            if (sinc == 0) pthread_mutex_lock(&mutex);
+
             saldo -= valor;
-            pthread_mutex_unlock(&mutex);
+
+            if (sinc == 0) pthread_mutex_unlock(&mutex);
         }
 
         int getSaldo(){
-            pthread_mutex_lock(&mutex);
+            if(sinc == 0) pthread_mutex_lock(&mutex);
+
             int saldoAtual = saldo;
-            pthread_mutex_unlock(&mutex);
+
+            if(sinc == 0) pthread_mutex_unlock(&mutex);
+            
             return saldoAtual;
+        }
+
+        void setSinc(int s){
+            sinc = s;
         }
 };
 
